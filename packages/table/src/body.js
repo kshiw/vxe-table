@@ -481,6 +481,8 @@ export default {
   },
   data () {
     return {
+      wheelFlagTime: null,
+      wheelFlag: false,
       wheelTime: null,
       wheelYSize: 0,
       wheelYInterval: 0,
@@ -732,7 +734,8 @@ export default {
       this.wheelYTotal = 0
       clearTimeout(this.wheelTime)
       const handleSmooth = () => {
-        let { fixedType, wheelYTotal, wheelYSize, wheelYInterval } = this
+        let { fixedType, wheelYTotal, wheelYSize, wheelYInterval, wheelFlag } = this
+        if (!wheelFlag) return
         if (wheelYTotal < wheelYSize) {
           wheelYInterval = Math.max(5, Math.floor(wheelYInterval * 1.5))
           wheelYTotal = wheelYTotal + wheelYInterval
@@ -783,6 +786,11 @@ export default {
       const deltaLeft = deltaX
       const isTopWheel = deltaTop < 0
       // 如果滚动位置已经是顶部或底部，则不需要触发
+      clearTimeout(this.wheelFlagTime)
+      this.wheelFlag = true
+      this.wheelFlagTime = setTimeout(() => {
+        this.wheelFlag = false
+      }, 300)
       if (isTopWheel ? scrollBodyElem.scrollTop <= 0 : scrollBodyElem.scrollTop >= scrollBodyElem.scrollHeight - scrollBodyElem.clientHeight) {
         return
       }
